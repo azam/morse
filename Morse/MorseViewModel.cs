@@ -1,16 +1,13 @@
 ﻿using Livet;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using TweetSharp;
 
-namespace MorsePlugin
+namespace Morse
 {
-    internal class MorsePluginViewModel : ViewModel
+    internal class MorseViewModel : ViewModel
     {
         private readonly string CLIENTID = "2t5mGdPSuhri5SlInpJO2GXGf";
 
@@ -22,7 +19,7 @@ namespace MorsePlugin
 
         private OAuthRequestToken requestToken;
 
-        private MorsePluginSettings settings = MorsePluginSettings.Default;
+        private MorseSettings settings = MorseSettings.Default;
 
         public string _verifier;
         public string verifier { get { return this._verifier; } set { this._verifier = value; RaisePropertyChanged("canVerify"); } }
@@ -144,7 +141,7 @@ namespace MorsePlugin
             }
         }
 
-        public MorsePluginViewModel()
+        public MorseViewModel()
         {
             this.status = "";
             this.verifier = "";

@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MorsePlugin {
+namespace Morse {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
-    public sealed partial class MorsePluginSettings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class MorseSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static MorsePluginSettings defaultInstance = ((MorsePluginSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new MorsePluginSettings())));
+        private static MorseSettings defaultInstance = ((MorseSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new MorseSettings())));
         
-        public static MorsePluginSettings Default {
+        public static MorseSettings Default {
             get {
                 return defaultInstance;
             }

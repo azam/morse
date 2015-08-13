@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MorsePlugin
+namespace Morse
 {
     /// <summary>
-    /// MorsePluginView.xaml の相互作用ロジック
+    /// MorseView.xaml の相互作用ロジック
     /// </summary>
-    public partial class MorsePluginView : UserControl
+    public partial class MorseView : UserControl
     {
-        public MorsePluginView()
+        public MorseView()
         {
             InitializeComponent();
         }

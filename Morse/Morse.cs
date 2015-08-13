@@ -1,7 +1,7 @@
 ﻿using Grabacr07.KanColleViewer.Composition;
 using System.ComponentModel.Composition;
 
-namespace MorsePlugin
+namespace Morse
 {
     [Export(typeof(IPlugin))]
     [Export(typeof(ITool))]
@@ -10,17 +10,17 @@ namespace MorsePlugin
     [ExportMetadata("Description", "提督業も忙しい！(KanColleViewer)用Twitterプラグイン")]
     [ExportMetadata("Version", "4.1.0")] // Major and minor version correlate with KanColleViewer version
     [ExportMetadata("Author", "@azamshul")]
-    public class MorsePlugin : IPlugin, ITool
+    public class Morse : IPlugin, ITool
     {
         public string Name { get { return "Morse"; } }
 
-        public object View { get { return new MorsePluginView { DataContext = this.vm }; } }
+        public object View { get { return new MorseView { DataContext = this.vm }; } }
 
-        private MorsePluginViewModel vm;
+        private MorseViewModel vm;
 
         public void Initialize()
         {
-            this.vm = new MorsePluginViewModel { }; // Allow recreation of view model on initialize
+            this.vm = new MorseViewModel { }; // Allow recreation of view model on initialize
         }
 
     }
