@@ -1,18 +1,18 @@
 ﻿using Livet;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using TweetSharp;
 
 namespace Morse
 {
     internal class MorseViewModel : ViewModel
     {
-        private readonly string CLIENTID = "2t5mGdPSuhri5SlInpJO2GXGf";
-
-        private readonly string CLIENTSECRET = "";
-
         private ITwitterService service = null;
 
         private ITwitterService futureService = null;
@@ -21,11 +21,17 @@ namespace Morse
 
         private MorseSettings settings = MorseSettings.Default;
 
-        public string _verifier;
+        private string _verifier;
+
         public string verifier { get { return this._verifier; } set { this._verifier = value; RaisePropertyChanged("canVerify"); } }
 
-        public string _status;
+        private string _status;
+
         public string status { get { return this._status; } set { this._status = value; RaisePropertyChanged("canTweet"); RaisePropertyChanged("isBusy"); } }
+
+        private BitmapImage _avatar;
+
+        public BitmapImage avatar { get { return this._avatar; } set { this._avatar = value; RaisePropertyChanged("avatar"); } }
 
         public bool isSettingsOpened { get; set; }
 
@@ -41,7 +47,7 @@ namespace Morse
         {
             this.verifier = "";
             this.requestToken = null;
-            this.futureService = new TwitterService(CLIENTID, CLIENTSECRET);
+            this.futureService = new TwitterService(MorseConstants.CLIENTID, MorseConstants.CLIENTSECRET);
             this.requestToken = this.futureService.GetRequestToken();
             try
             {
@@ -56,6 +62,7 @@ namespace Morse
         }
 
         public ICommand _authorizeCommand = null;
+
         public ICommand authorizeCommand
         {
             get
@@ -77,6 +84,7 @@ namespace Morse
         }
 
         public ICommand _verifyCommand;
+
         public ICommand verifyCommand
         {
             get
@@ -101,6 +109,7 @@ namespace Morse
                     this.settings.accessToken = token;
                     this.settings.accessTokenSecret = secret;
                     this.settings.Save();
+                    updateProfile();
                 }
                 catch (Exception e)
                 {
@@ -109,11 +118,53 @@ namespace Morse
                     this.verifier = "";
                     MessageBox.Show(e.Message, "Morse Plugin: " + e.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                this.RaisePropertyChanged("isSettingsOpened");
-                this.RaisePropertyChanged("canTweet");
-                this.RaisePropertyChanged("canEditVerifier");
-                this.RaisePropertyChanged("canVerify");
+                finally
+                {
+                    this.RaisePropertyChanged("isSettingsOpened");
+                    this.RaisePropertyChanged("canTweet");
+                    this.RaisePropertyChanged("canEditVerifier");
+                    this.RaisePropertyChanged("canVerify");
+                }
             }
+        }
+
+        private void updateProfile()
+        {
+            if (this.service != null)
+            {
+                this.service.GetUserProfileAsync(new GetUserProfileOptions { }).ContinueWith(res =>
+                {
+                    TwitterUser u = res.Result.Value;
+                    if (u != null)
+                    {
+                        if (this.settings.id != u.Id)
+                        {
+                            this.settings.id = u.Id;
+                            this.settings.Save();
+                            updateAvatar(u.ProfileImageUrlHttps);
+                        }
+                    }
+                });
+            }
+        }
+
+        private void updateAvatar(string url)
+        {
+            WebRequest req = WebRequest.Create(url);
+            req.GetResponseAsync().ContinueWith(res =>
+            {
+                MemoryStream s = new MemoryStream();
+                res.Result.GetResponseStream().CopyTo(s);
+                this.settings.avatar = Convert.ToBase64String(s.ToArray());
+                this.settings.Save();
+                BitmapImage bi = new BitmapImage();
+                bi.BeginInit();
+                bi.CacheOption = BitmapCacheOption.OnLoad; // Closes stream after load
+                bi.StreamSource = s;
+                bi.EndInit();
+                this.avatar = bi;
+                this.RaisePropertyChanged("avatar");
+            });
         }
 
         public void tweet()
@@ -121,12 +172,17 @@ namespace Morse
             if (this.service != null && !this.isBusy && !string.IsNullOrWhiteSpace(this.status))
             {
                 this.isBusy = true;
-                this.RaisePropertyChanged();
-                TwitterStatus s = this.service.SendTweet(new SendTweetOptions { Status = this.status });
-                this.status = "";
-                this.isBusy = false;
                 this.RaisePropertyChanged("isBusy");
                 this.RaisePropertyChanged("canTweet");
+                Task<TwitterAsyncResult<TwitterStatus>> t = this.service.SendTweetAsync(new SendTweetOptions { Status = this.status });
+                t.ContinueWith(res =>
+                {
+                    this.status = "";
+                    this.isBusy = false;
+                    this.RaisePropertyChanged("status");
+                    this.RaisePropertyChanged("isBusy");
+                    this.RaisePropertyChanged("canTweet");
+                });
             }
         }
 
@@ -147,7 +203,7 @@ namespace Morse
             this.verifier = "";
             this.requestToken = null;
             this.service = null;
-            this.futureService = new TwitterService(CLIENTID, CLIENTSECRET);
+            this.futureService = new TwitterService(MorseConstants.CLIENTID, MorseConstants.CLIENTSECRET);
             if (this.settings != null && !string.IsNullOrWhiteSpace(this.settings.accessToken) && !string.IsNullOrWhiteSpace(this.settings.accessTokenSecret))
             {
                 this.prepare(this.settings.accessToken, this.settings.accessTokenSecret);

@@ -46,5 +46,28 @@ namespace Morse {
                 this["accessTokenSecret"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public long id {
+            get {
+                return ((long)(this["id"]));
+            }
+            set {
+                this["id"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string avatar {
+            get {
+                return ((string)(this["avatar"]));
+            }
+            set {
+                this["avatar"] = value;
+            }
+        }
     }
 }

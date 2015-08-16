@@ -48,9 +48,13 @@
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
+                <Grid Grid.Column="0" Width="{Binding Path=ActualHeight}">
+                    <Image Source="{Binding avatar, TargetNullValue={x:Null}}" />
+                </Grid>
+                <Grid Grid.Column="1">
                     <TextBox Text="{Binding Path=status, Mode=TwoWay}" TextWrapping="WrapWithOverflow" AcceptsReturn="True" AcceptsTab="False" SpellCheck.IsEnabled="True" Foreground="{DynamicResource ForegroundBrushKey}" Background="{DynamicResource ThemeBrushKey}" BorderBrush="{DynamicResource BorderBrushKey}" VerticalAlignment="Top"/>
                     <!-- Placeholder text -->
                     <!-- <TextBlock IsHitTestVisible="False" IsEnabled="{Binding isAuthorized}" Text="Type message here.." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="{DynamicResource InactiveForegroundBrushKey}">
@@ -66,7 +70,7 @@
                         </TextBlock.Style>
                     </TextBlock> -->
                 </Grid>
-                <Button Grid.Column="1" Command="{Binding tweetCommand}" Content="Tweet" Margin="4,0,0,0"></Button>
+                <Button Grid.Column="2" Command="{Binding tweetCommand}" Content="Tweet" Margin="4,0,0,0"></Button>
             </Grid>
             <Expander Grid.Row="2" IsExpanded="{Binding Path=isSettingsOpened, Mode=TwoWay}" Margin="0,4,0,4">
                 <Expander.Header>
