@@ -49,6 +49,7 @@ namespace Morse {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
         public long id {
             get {
                 return ((long)(this["id"]));
@@ -67,6 +68,18 @@ namespace Morse {
             }
             set {
                 this["avatar"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tags {
+            get {
+                return ((string)(this["tags"]));
+            }
+            set {
+                this["tags"] = value;
             }
         }
     }

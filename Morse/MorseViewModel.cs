@@ -1,11 +1,14 @@
 ﻿using Livet;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TweetSharp;
 
@@ -25,13 +28,40 @@ namespace Morse
 
         public string verifier { get { return this._verifier; } set { this._verifier = value; RaisePropertyChanged("canVerify"); } }
 
+        public string tags { get { return this.settings.tags; } set { this.settings.tags = value; this.settings.Save(); RaisePropertyChanged("tags"); } }
+
         private string _status;
 
         public string status { get { return this._status; } set { this._status = value; RaisePropertyChanged("canTweet"); RaisePropertyChanged("isBusy"); } }
 
-        private BitmapImage _avatar;
+        public string msg
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(this.status))
+                {
+                    if (!string.IsNullOrWhiteSpace(this.settings.tags))
+                    {
+                        return string.Concat(this.status, " ", this.settings.tags);
+                    }
+                    else
+                    {
+                        return this.status;
+                    }
+                }
+                else {
+                    if (!string.IsNullOrWhiteSpace(this.settings.tags))
+                    {
+                        return this.settings.tags;
+                    }
+                }
+                return null;
+            }
+        }
 
-        public BitmapImage avatar { get { return this._avatar; } set { this._avatar = value; RaisePropertyChanged("avatar"); } }
+        private ImageSource _avatar;
+
+        public ImageSource avatar { get { return this._avatar; } set { this._avatar = value; RaisePropertyChanged("avatar"); } }
 
         public bool isSettingsOpened { get; set; }
 
@@ -68,7 +98,10 @@ namespace Morse
             get
             {
                 if (this._authorizeCommand == null)
+                {
                     this._authorizeCommand = new RelayCommand(param => this.authorize());
+                }
+
                 return this._authorizeCommand;
             }
         }
@@ -90,7 +123,9 @@ namespace Morse
             get
             {
                 if (this._verifyCommand == null)
+                {
                     this._verifyCommand = new RelayCommand(param => this.verify());
+                }
                 return this._verifyCommand;
             }
         }
@@ -109,7 +144,7 @@ namespace Morse
                     this.settings.accessToken = token;
                     this.settings.accessTokenSecret = secret;
                     this.settings.Save();
-                    updateProfile();
+                    this.updateProfile();
                 }
                 catch (Exception e)
                 {
@@ -141,7 +176,27 @@ namespace Morse
                         {
                             this.settings.id = u.Id;
                             this.settings.Save();
-                            updateAvatar(u.ProfileImageUrlHttps);
+                            this.updateAvatar(u.ProfileImageUrlHttps);
+                        }
+                        if (!string.IsNullOrWhiteSpace(this.settings.avatar))
+                        {
+                            try
+                            {
+                                BitmapImage img = new BitmapImage();
+                                img.BeginInit();
+                                img.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                                img.CacheOption = BitmapCacheOption.OnLoad; // Closes stream after load
+                                img.UriSource = null;
+                                img.StreamSource = new MemoryStream(Convert.FromBase64String(this.settings.avatar));
+                                img.EndInit();
+                                img.Freeze();
+                                this.avatar = (ImageSource)img;
+                            }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show(e.Message, "BitmapImage failed");
+                            }
+                            this.RaisePropertyChanged("avatar");
                         }
                     }
                 });
@@ -155,26 +210,22 @@ namespace Morse
             {
                 MemoryStream s = new MemoryStream();
                 res.Result.GetResponseStream().CopyTo(s);
-                this.settings.avatar = Convert.ToBase64String(s.ToArray());
+                byte[] bytes = s.ToArray();
+                string b64 = Convert.ToBase64String(bytes);
+                s.Close();
+                this.settings.avatar = b64;
                 this.settings.Save();
-                BitmapImage bi = new BitmapImage();
-                bi.BeginInit();
-                bi.CacheOption = BitmapCacheOption.OnLoad; // Closes stream after load
-                bi.StreamSource = s;
-                bi.EndInit();
-                this.avatar = bi;
-                this.RaisePropertyChanged("avatar");
             });
         }
 
         public void tweet()
         {
-            if (this.service != null && !this.isBusy && !string.IsNullOrWhiteSpace(this.status))
+            if (this.service != null && !this.isBusy && !string.IsNullOrWhiteSpace(this.msg))
             {
                 this.isBusy = true;
                 this.RaisePropertyChanged("isBusy");
                 this.RaisePropertyChanged("canTweet");
-                Task<TwitterAsyncResult<TwitterStatus>> t = this.service.SendTweetAsync(new SendTweetOptions { Status = this.status });
+                Task<TwitterAsyncResult<TwitterStatus>> t = this.service.SendTweetAsync(new SendTweetOptions { Status = this.msg });
                 t.ContinueWith(res =>
                 {
                     this.status = "";
@@ -187,12 +238,15 @@ namespace Morse
         }
 
         public ICommand _tweetCommand;
+
         public ICommand tweetCommand
         {
             get
             {
                 if (this._tweetCommand == null)
+                {
                     this._tweetCommand = new RelayCommand(param => this.tweet());
+                }
                 return this._tweetCommand;
             }
         }

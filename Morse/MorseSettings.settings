@@ -9,9 +9,12 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="id" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="avatar" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="tags" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

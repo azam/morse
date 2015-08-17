@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:metro="http://schemes.grabacr.net/winfx/2014/controls" 
              xmlns:mp="clr-namespace:Morse"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance mp:MorseViewModel}"
@@ -37,64 +38,53 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Tweet -->
                 <RowDefinition Height="*"/>
-                <!-- Screenshot -->
                 <RowDefinition Height="Auto"/>
-                <!-- Settings -->
                 <RowDefinition Height="Auto"/>
-                <!-- Footer -->
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" Width="{Binding Path=ActualHeight}">
-                    <Image Source="{Binding avatar, TargetNullValue={x:Null}}" />
-                </Grid>
-                <Grid Grid.Column="1">
-                    <TextBox Text="{Binding Path=status, Mode=TwoWay}" TextWrapping="WrapWithOverflow" AcceptsReturn="True" AcceptsTab="False" SpellCheck.IsEnabled="True" Foreground="{DynamicResource ForegroundBrushKey}" Background="{DynamicResource ThemeBrushKey}" BorderBrush="{DynamicResource BorderBrushKey}" VerticalAlignment="Top"/>
-                    <!-- Placeholder text -->
-                    <!-- <TextBlock IsHitTestVisible="False" IsEnabled="{Binding isAuthorized}" Text="Type message here.." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="{DynamicResource InactiveForegroundBrushKey}">
-                        <TextBlock.Style>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding message, ElementName=MessageTextBox}" Value="">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock> -->
-                </Grid>
-                <Button Grid.Column="2" Command="{Binding tweetCommand}" Content="Tweet" Margin="4,0,0,0"></Button>
+                <Image Grid.Column="0" Width="32" Height="32" Stretch="Fill" Source="{Binding avatar, TargetNullValue={x:Null}}" Margin="0,0,4,0"/>
+                <metro:PromptTextBox Grid.Column="1" Height="32" Text="{Binding Path=status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Prompt="{x:Static mp:MorseResources.statusPlaceholder}" VerticalAlignment="Center" VerticalContentAlignment="Center">
+                    <metro:PromptTextBox.InputBindings>
+                        <KeyBinding Command="{Binding tweetCommand}" Key="Enter" Modifiers="Ctrl" />
+                    </metro:PromptTextBox.InputBindings>
+                </metro:PromptTextBox>
+                <Button Grid.Column="2" Command="{Binding tweetCommand}" Content="{x:Static mp:MorseResources.send}" Margin="4,0,0,0"></Button>
             </Grid>
             <Expander Grid.Row="2" IsExpanded="{Binding Path=isSettingsOpened, Mode=TwoWay}" Margin="0,4,0,4">
                 <Expander.Header>
-                    <TextBlock Text="Settings" Style="{DynamicResource HeaderTextStyleKey}"
-							   Foreground="{DynamicResource ActiveForegroundBrushKey}" />
+                    <TextBlock Text="{x:Static mp:MorseResources.settings}" Style="{DynamicResource HeaderTextStyleKey}" Foreground="{DynamicResource ActiveForegroundBrushKey}" />
                 </Expander.Header>
-                <Border BorderThickness="1"
-						BorderBrush="{DynamicResource BorderBrushKey}"
-						Padding="4">
+                <Border BorderThickness="1" BorderBrush="{DynamicResource BorderBrushKey}" Padding="4">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Command="{Binding authorizeCommand}" Grid.Column="0" Content="Authorize" Margin="0,0,4,0"></Button>
-                        <TextBox Grid.Column="1" Text="{Binding Path=verifier, Mode=TwoWay}" IsEnabled="{Binding canEditVerifier}" AcceptsReturn="True" AcceptsTab="False" SpellCheck.IsEnabled="True" Foreground="{DynamicResource ForegroundBrushKey}" Background="{DynamicResource ThemeBrushKey}" BorderBrush="{DynamicResource BorderBrushKey}" ></TextBox>
-                        <Button Grid.Column="2" Command="{Binding verifyCommand}" IsEnabled="{Binding canEditVerifier}" Content="Verify" Margin="4,0,0,0"></Button>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding authorizeCommand}" Grid.Column="0" Content="{x:Static mp:MorseResources.authorize}" Margin="0,0,4,0"></Button>
+                            <metro:PromptTextBox Grid.Column="1" Text="{Binding Path=verifier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding canEditVerifier}" Prompt="{x:Static mp:MorseResources.verifierPlaceholder}" VerticalAlignment="Center" VerticalContentAlignment="Center">
+                                <metro:PromptTextBox.InputBindings>
+                                    <KeyBinding Command="{Binding verifyCommand}" Key="Enter"/>
+                                </metro:PromptTextBox.InputBindings>
+                            </metro:PromptTextBox>
+                            <Button Grid.Column="2" Command="{Binding verifyCommand}" IsEnabled="{Binding canEditVerifier}" Content="{x:Static mp:MorseResources.verify}" Margin="4,0,0,0"></Button>
+                        </Grid>
+                        <metro:PromptTextBox Grid.Row="1" Text="{Binding Path=tags, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Prompt="{x:Static mp:MorseResources.tagsPlaceholder}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,4,0,0"/>
                     </Grid>
                 </Border>
             </Expander>
-            <Grid Grid.Row="3">
-                <TextBlock Text="Morse Plugin by @azamshul" Style="{DynamicResource DefaultTextStyleKey}"/>
-            </Grid>
+            <TextBlock Grid.Row="3" Text="{x:Static mp:MorseResources.footer}" Style="{DynamicResource DefaultTextStyleKey}"/>
         </Grid>
     </ContentControl>
 </UserControl>
