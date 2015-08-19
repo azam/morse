@@ -16,7 +16,7 @@ KanColleViewerの詳細は[作者ページ](http://grabacr.net/kancolleviewer) �
 > Copyright (c) 2013 Grabacr07
 
 * **ライセンス :** The MIT License (MIT)
-* **ライセンス全文 :** [licenses/KanColleViewer.txt](licenses/kancolleviewer.txt)
+* **ライセンス全文 :** [licenses/kancolleviewer.txt](licenses/kancolleviewer.txt)
 
 #### [MetroRadiance](https://github.com/Grabacr07/MetroRadiance)
 
@@ -25,7 +25,7 @@ KanColleViewerの詳細は[作者ページ](http://grabacr.net/kancolleviewer) �
 > Copyright (c) 2014 Manato KAMEYA
 
 * **ライセンス :** The MIT License (MIT)
-* **ライセンス全文 :** [licenses/MetroRadiance.txt](licenses/metroradiance.txt)
+* **ライセンス全文 :** [licenses/metroradiance.txt](licenses/metroradiance.txt)
 
 #### [Livet](http://ugaya40.hateblo.jp/entry/Livet)
 
