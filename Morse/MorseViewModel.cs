@@ -1,16 +1,18 @@
 ﻿using Livet;
+using Grabacr07.KanColleViewer.Controls.Globalization;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TweetSharp;
+using System.Reflection;
+using System.Collections.ObjectModel;
 
 namespace Morse
 {
@@ -32,7 +34,17 @@ namespace Morse
 
         private string _status;
 
-        public string status { get { return this._status; } set { this._status = value; RaisePropertyChanged("canTweet"); RaisePropertyChanged("isBusy"); } }
+        public string status
+        {
+            get { return this._status; }
+            set
+            {
+                this._status = value;
+                this.RaisePropertyChanged("canTweet");
+                this.RaisePropertyChanged("isBusy");
+                this.RaisePropertyChanged("details");
+            }
+        }
 
         public string msg
         {
@@ -49,7 +61,8 @@ namespace Morse
                         return this.status;
                     }
                 }
-                else {
+                else
+                {
                     if (!string.IsNullOrWhiteSpace(this.settings.tags))
                     {
                         return this.settings.tags;
@@ -159,6 +172,7 @@ namespace Morse
                     this.RaisePropertyChanged("canTweet");
                     this.RaisePropertyChanged("canEditVerifier");
                     this.RaisePropertyChanged("canVerify");
+                    this.RaisePropertyChanged("details");
                 }
             }
         }
@@ -233,6 +247,7 @@ namespace Morse
                     this.RaisePropertyChanged("status");
                     this.RaisePropertyChanged("isBusy");
                     this.RaisePropertyChanged("canTweet");
+                    this.RaisePropertyChanged("details");
                 });
             }
         }
@@ -248,6 +263,88 @@ namespace Morse
                     this._tweetCommand = new RelayCommand(param => this.tweet());
                 }
                 return this._tweetCommand;
+            }
+        }
+
+        public string details
+        {
+            get
+            {
+                return "Length: " + this.msg + "/140 " + this.screenshotFolder;
+            }
+        }
+
+        public int statusLength()
+        {
+            int i = this.msg.Length;
+            if (this.attachments != null && this.attachments.Length > 0)
+            {
+                i += 23 * (this.attachments.Length) + (this.attachments.Length - 1);
+            }
+            return i;
+        }
+
+        public string[] attachments;
+
+        public void clearAttachments() { }
+
+        private string _screenshotFolder;
+
+        public string screenshotFolder
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(this._screenshotFolder))
+                {
+                    try
+                    {
+                        // Assembly[] al = AppDomain.CurrentDomain.GetAssemblies();
+                        Type type = Assembly.GetEntryAssembly().GetType("Grabacr07.KanColleViewer.Models.Settings.ScreenshotSettings");
+                        string dest = (string)type.GetProperty("Destination").GetValue(null, null);
+                        if (string.IsNullOrWhiteSpace(dest))
+                        {
+                            MessageBox.Show(dest, "ScreenshotFolder");
+                            this._screenshotFolder = dest;
+                        }
+                        this.RaisePropertyChanged("currentScreenshot");
+                    }
+                    catch (AmbiguousMatchException e)
+                    {
+                        MessageBox.Show(e.Message, "ScreenshotFolder");
+                    }
+                    catch (ArgumentNullException e)
+                    {
+                        MessageBox.Show(e.Message, "ScreenshotFolder");
+                    }
+                }
+                return this._screenshotFolder;
+            }
+        }
+
+        public ObservableCollection<string> screenshots
+        {
+            get
+            {
+                return new ObservableCollection<string>(Directory.EnumerateFiles(@"Z:\kancolle", "KanColle*.png"));
+            }
+        }
+
+        private string _currentScreenshot;
+
+        public string currentScreenshot
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(this._currentScreenshot))
+                {
+                    this._currentScreenshot = Directory.EnumerateFiles(@"Z:\kancolle", "KanColle*.png").OrderByDescending(filename => filename).First();
+                }
+                return this._currentScreenshot;
+            }
+            set
+            {
+                this._currentScreenshot = value;
+                this.RaisePropertyChanged("currentScreenshot");
             }
         }
 

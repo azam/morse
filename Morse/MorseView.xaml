@@ -38,11 +38,12 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -56,7 +57,33 @@
                 </metro:PromptTextBox>
                 <Button Grid.Column="2" Command="{Binding tweetCommand}" Content="{x:Static mp:MorseResources.send}" Margin="4,0,0,0"></Button>
             </Grid>
-            <Expander Grid.Row="2" IsExpanded="{Binding Path=isSettingsOpened, Mode=TwoWay}" Margin="0,4,0,4">
+            <metro:BindableTextBlock Grid.Row="1" Text="{Binding Path=details, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DefaultTextStyleKey}" Margin="0,0,0,4" HorizontalAlignment="Right"/>
+            <Grid  Grid.Row="2" Margin="0,0,0,4">
+                <Image Source="{Binding currentScreenshot}"/>
+            </Grid>
+            <!--<ScrollViewer Name="screenshotViewer" Grid.Row="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,4">
+                <ListBox Name="screenshotListBox" ItemsSource="{Binding screenshots}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{Binding}" Margin="4,4,0,4"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+            </ScrollViewer>-->
+            <!--<TextBlock Grid.Row="1" Text="Image here" Style="{DynamicResource HeaderTextStyleKey}" Foreground="{DynamicResource ActiveForegroundBrushKey}" ></TextBlock>-->
+            <!-- <FlipView x:Name="flipView1" SelectionChanged="FlipView_SelectionChanged">
+                <Image Source="Assets/Logo.png" />
+                <Image Source="Assets/SplashScreen.png" />
+                <Image Source="Assets/SmallLogo.png" />
+            </FlipView> -->
+            <Expander Grid.Row="3" IsExpanded="{Binding Path=isSettingsOpened, Mode=TwoWay}" Margin="0,0,0,4">
                 <Expander.Header>
                     <TextBlock Text="{x:Static mp:MorseResources.settings}" Style="{DynamicResource HeaderTextStyleKey}" Foreground="{DynamicResource ActiveForegroundBrushKey}" />
                 </Expander.Header>
@@ -84,7 +111,7 @@
                     </Grid>
                 </Border>
             </Expander>
-            <TextBlock Grid.Row="3" Text="{x:Static mp:MorseResources.footer}" Style="{DynamicResource DefaultTextStyleKey}"/>
+            <TextBlock Grid.Row="4" Text="{x:Static mp:MorseResources.footer}" Style="{DynamicResource DefaultTextStyleKey}"/>
         </Grid>
     </ContentControl>
 </UserControl>
