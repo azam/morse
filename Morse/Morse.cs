@@ -22,6 +22,5 @@ namespace Morse
         {
             this.vm = new MorseViewModel { }; // Allow recreation of view model on initialize
         }
-
     }
 }

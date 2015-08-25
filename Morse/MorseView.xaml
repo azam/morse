@@ -1,9 +1,11 @@
 ﻿<UserControl x:Class="Morse.MorseView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:metro="http://schemes.grabacr.net/winfx/2014/controls" 
+			 xmlns:livet="http://schemas.livet-mvvm.net/2011/wpf"
+             xmlns:metro="http://schemes.grabacr.net/winfx/2014/controls" 
              xmlns:mp="clr-namespace:Morse"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance mp:MorseViewModel}"
@@ -58,8 +60,55 @@
                 <Button Grid.Column="2" Command="{Binding tweetCommand}" Content="{x:Static mp:MorseResources.send}" Margin="4,0,0,0"></Button>
             </Grid>
             <metro:BindableTextBlock Grid.Row="1" Text="{Binding Path=details, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DefaultTextStyleKey}" Margin="0,0,0,4" HorizontalAlignment="Right"/>
-            <Grid  Grid.Row="2" Margin="0,0,0,4">
+            <Grid Grid.Row="2" Margin="0,0,0,4">
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <!-- <TextBlock Text="Previous" Style="{DynamicResource DefaultTextStyleKey}"></TextBlock> -->
+                    <Viewbox Width="48" Height="48">
+                        <Path Fill="#FFFFFF" Opacity="0.5">
+                            <Path.Data>
+                                <PathGeometry Figures="M 176 0 L 48 128 L 176 256 L 208 224 L 112 128 L 208 32 Z"/>
+                            </Path.Data>
+                        </Path>
+                    </Viewbox>
+                </Grid>
                 <Image Source="{Binding currentScreenshot}"/>
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- <TextBlock Text="Selected" Style="{DynamicResource DefaultTextStyleKey}"></TextBlock> -->
+                    <Viewbox Width="48" Height="48">
+                        <Path Fill="#FFFFFF" Opacity="0.5">
+                            <Path.Data>
+                                <PathGeometry Figures="M 0 128 L 96 224 L 256 64 L 224 32 L 96 160 L 32 96 Z"/>
+                            </Path.Data>
+                        </Path>
+                    </Viewbox>
+                </Grid>
+                <Grid HorizontalAlignment="Right" VerticalAlignment="Top" >
+                    <!-- <TextBlock Text="Latest" Style="{DynamicResource DefaultTextStyleKey}"></TextBlock> -->
+                    <Viewbox Width="48" Height="48">
+                        <Path Fill="#FFFFFF" Opacity="0.5">
+                            <Path.Data>
+                                <CombinedGeometry GeometryCombineMode="Union">
+                                    <CombinedGeometry.Geometry1>
+                                        <PathGeometry Figures="M 80 0 L 208 128 L 80 256 L 48 224 L 144 128 L 48 32 Z"/>
+                                    </CombinedGeometry.Geometry1>
+                                    <CombinedGeometry.Geometry2>
+                                        <PathGeometry Figures="M 208 0 L 208 256 L 240 256 L 240 0 Z"/>
+                                    </CombinedGeometry.Geometry2>
+                                </CombinedGeometry>
+                            </Path.Data>
+                        </Path>
+                    </Viewbox>
+                </Grid>
+                <Grid HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <!-- <TextBlock Text="Next" Style="{DynamicResource DefaultTextStyleKey}"></TextBlock> -->
+                    <Viewbox Width="48" Height="48">
+                        <Path Fill="#FFFFFF" Opacity="0.5">
+                            <Path.Data>
+                                <PathGeometry Figures="M 80 0 L 208 128 L 80 256 L 48 224 L 144 128 L 48 32 Z"/>
+                            </Path.Data>
+                        </Path>
+                    </Viewbox>
+                </Grid>
             </Grid>
             <!--<ScrollViewer Name="screenshotViewer" Grid.Row="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,4">
                 <ListBox Name="screenshotListBox" ItemsSource="{Binding screenshots}">
@@ -111,7 +160,16 @@
                     </Grid>
                 </Border>
             </Expander>
-            <TextBlock Grid.Row="4" Text="{x:Static mp:MorseResources.footer}" Style="{DynamicResource DefaultTextStyleKey}"/>
+            <TextBlock Grid.Row="4" Style="{DynamicResource DefaultTextStyleKey}">
+                <Hyperlink Foreground="{DynamicResource LinkForegroundBrushKey}" Cursor="Hand">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <livet:LivetCallMethodAction MethodName="gotoAuthorPage" MethodTarget="{Binding}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Run Text="{x:Static mp:MorseResources.footer}" />
+                </Hyperlink>
+            </TextBlock>
         </Grid>
     </ContentControl>
 </UserControl>

@@ -79,6 +79,15 @@ namespace Morse {
         }
         
         /// <summary>
+        ///   http://azam.io に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string authorUrl {
+            get {
+                return ResourceManager.GetString("authorUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Morse by @azamshul に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string footer {

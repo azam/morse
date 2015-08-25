@@ -348,6 +348,17 @@ namespace Morse
             }
         }
 
+        public void gotoAuthorPage(string param)
+        {
+            try
+            {
+                Process.Start(MorseResources.authorUrl);
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
         public MorseViewModel()
         {
             this.status = "";

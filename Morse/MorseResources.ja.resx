@@ -123,6 +123,9 @@
   <data name="authorize" xml:space="preserve">
     <value>認証</value>
   </data>
+  <data name="authorUrl" xml:space="preserve">
+    <value>http://azam.io</value>
+  </data>
   <data name="footer" xml:space="preserve">
     <value>Morse by @azamshul</value>
   </data>
