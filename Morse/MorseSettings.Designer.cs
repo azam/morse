@@ -82,5 +82,29 @@ namespace Morse {
                 this["tags"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int maxMedia {
+            get {
+                return ((int)(this["maxMedia"]));
+            }
+            set {
+                this["maxMedia"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("23")]
+        public int mediaChars {
+            get {
+                return ((int)(this["mediaChars"]));
+            }
+            set {
+                this["mediaChars"] = value;
+            }
+        }
     }
 }
